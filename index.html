@@ -130,27 +130,41 @@
   </div>
 
   <script>
-    let display = document.getElementById('display');
+const display = document.querySelector("#display");
+const buttons = document.querySelectorAll("button");
 
-    function append(value) {
-      if (display.innerText === '0' || display.innerText === 'Error') {
-        display.innerText = value;
-      } else {
-        display.innerText += value;
-      }
-    }
+buttons.forEach(button => {
+  button.addEventListener("click", () => {
+    const value = button.textContent;
 
-    function clearDisplay() {
-      display.innerText = '0';
-    }
-
-    function calculate() {
+    if (value === "C") {
+      display.innerText = "";
+    } else if (value === "←") {
+      display.innerText = display.innerText.slice(0, -1);
+    } else if (value === "=") {
       try {
-        display.innerText = eval(display.innerText.replace('÷', '/').replace('×', '*'));
-      } catch {
-        display.innerText = 'Error';
+        let expression = display.innerText
+          .replace(/×/g, '*')
+          .replace(/÷/g, '/')
+          .replace(/[^-()\d/*+.%]/g, '');
+        while (/[\+\-\*\/\.]$/.test(expression)) {
+          expression = expression.slice(0, -1);
+        }
+        if (expression) {
+          display.innerText = eval(expression).toString();
+        } else {
+          display.innerText = "Error";
+        }
+      } catch (error) {
+        display.innerText = "Error";
       }
+    } else {
+      display.innerText += value;
     }
+  });
+});
+
+
   </script>
 </body>
 </html>
